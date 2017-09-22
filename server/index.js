@@ -1,5 +1,7 @@
+var fetch = require('isomorphic-fetch');
 const express = require('express');
 let app = express();
+
 
 app.use(express.static(__dirname + '/../client/dist'));
 
@@ -13,6 +15,9 @@ app.post('/repos', function (req, res) {
 app.get('/repos', function (req, res) {
   // TODO - your code here!
   // This route should send back the top 25 repos
+
+  // fetch('http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json').then((ele) => console.log(ele.json()))
+
 });
 
 let port = 1128;
