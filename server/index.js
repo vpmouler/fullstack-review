@@ -41,8 +41,10 @@ app.post('/repos', function (req, res) {
           repoName:repo.name,
           description:repo.description,
           url:repo.html_url,
-          stars:repo.stargazers_count
+          stars:repo.stargazers_count,
+          id:repo.id
         }
+        console.log(repo.name)
         db.save(obj);
       })
       console.log('saved!!!')
@@ -79,10 +81,11 @@ app.get('/repos', function (req, res) {
   // TODO - your code here!
   // This route should send back the top 25 repos
 
-  db.find().exec((err, data) => {
+  db.find().limit(10).exec((err, data) => {
     if (err) {
       throw 'Could not fetch top 25'
     } else {
+      console.log(data)
       // callback(JSON.stringify(data))
       res.send(JSON.stringify(data));
     }

@@ -11,7 +11,8 @@ class App extends React.Component {
     super(props);
     this.state = { 
       repos: [],
-      username: null
+      username: null,
+      top: null
     }
 
   }
@@ -26,10 +27,8 @@ class App extends React.Component {
       type: 'POST',
       url: '/repos',
       contentType: 'application/json',
-      // crossDomain: true,
       data: JSON.stringify({username:term}),
       success: (data) => {
-        console.log('success', JSON.parse(data));
         var userRepos = JSON.parse(data);
         this.setState({
           repos: userRepos,
@@ -45,18 +44,31 @@ class App extends React.Component {
     })
   }
 
-  componentWillMount() {
-    fetch('/repos').then(data=> {return data.json()}).then(data => console.log('real',data))
-  }
-
-  renderRepos (userInfo) {
-    userInfo.forEach((repo) => {
-      return (<span>{repo.repoName}</span>)
+  componentDidMount() {
+    $.ajax({
+      url:'/repos',
+      type: 'GET',
+      success: (data) => {
+        console.log('success on GET', JSON.parse(data))
+        this.setState({
+          top: JSON.parse(data)
+        })
+      },
+      error: (err) => {
+        console.log('error!', err)
+      }
     })
+    // fetch('/repos').then(data=> {return data.json()}).then((data) => {
+    //   console.log(data)
+    //   this.setState({
+    //     top: data
+    //   })
+    // })
   }
 
   render () {
     if ( this.state.repos.length ) {
+      console.log('in if');
       return (
         <div>
           <h1>Github Fetcher</h1>
@@ -66,7 +78,23 @@ class App extends React.Component {
           <RenderRepos userRepos={this.state.repos}/>
         </div>
       )
-    } else {
+    } 
+
+    if ( this.state.top ) {
+      console.log('there are stars!!!')
+      return (
+        <div>
+          <h1>Github Fetcher</h1>
+          <RepoList repos={this.state.repos}/>
+          <Search onSearch={this.search.bind(this)}/>
+          <h1 style={{'border':'5px solid pink'}}> TOP REPOS! </h1>
+          <RenderRepos userRepos={this.state.top}/>
+        </div>
+      )
+    }
+
+    else {
+      console.log('in else');
       return (
         <div>
           <h1>Github Fetcher</h1>
@@ -76,13 +104,20 @@ class App extends React.Component {
       )
     }
   }
-}
+};
 
+
+// put in different file and import
 const RenderRepos = (props) => (
   <div>
     <ul>
       {props.userRepos.map(function(repo, index) {
-        return <li key={index}> {repo.name}: {repo.description} </li>
+        return (
+          <li key={index}>
+             <a href={repo.url}>{repo.repo}</a>
+             <a>: {repo.description}</a>
+          </li>
+          )
       })}
     </ul>
   </div>

@@ -5,10 +5,11 @@ let repoSchema = mongoose.Schema({
   // TODO: your schema here!
   username: String,
   // repos: [{repoName: String, description: String, url: String, stars: Number}],
-  repoName: String,
+  repo: String,
   description: String,
   url: String,
-  stars: Number
+  stars: Number,
+  repoId: Number
 });
 
 let Repo = mongoose.model('Repo', repoSchema);
@@ -20,7 +21,7 @@ let save = (data) => {
 
   // get data from API call
   // use data.username to make new repo
-  var newRepo = new Repo({username:data.username, repos:data.repoName, description:data.description, url:data.url, stars:data.stars}) // one repo {user:seva, repo:xx} {user:seva, repo:hh}
+  var newRepo = new Repo({username:data.username, repo:data.repoName, description:data.description, url:data.url, stars:data.stars, repoId:data.id}) // one repo {user:seva, repo:xx} {user:seva, repo:hh}
   return newRepo.save((err) => {if (err) throw 'Could not save to DB';});
 };
 
